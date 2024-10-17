@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number System Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #333;
+        }
+        label, select, input {
+            margin-top: 10px;
+            display: block;
+        }
+        input, select {
+            padding: 10px;
+            font-size: 16px;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #eaeaea;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Number System Converter</h2>
+
+    <form id="converterForm">
+        <label for="number">Enter the number:</label>
+        <input type="text" id="number" placeholder="Enter a number" required>
+
+        <label for="type">Select the input number system:</label>
+        <select id="type">
+            <option value="decimal">Decimal</option>
+            <option value="binary">Binary</option>
+            <option value="octal">Octal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+        </select>
+
+        <button type="submit">Convert</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('converterForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let num = document.getElementById('number').value.trim();
+            let type = document.getElementById('type').value;
+            let resultsDiv = document.getElementById('results');
+
+            if (!num) {
+                resultsDiv.innerHTML = 'Please enter a valid number.';
+                return;
+            }
+
+            let result = {};
+
+            try {
+                switch (type) {
+                    case 'decimal':
+                        result.binary = parseInt(num).toString(2);
+                        result.octal = parseInt(num).toString(8);
+                        result.hexadecimal = parseInt(num).toString(16).toUpperCase();
+                        break;
+                    case 'binary':
+                        if (!/^[01]+$/.test(num)) throw "Invalid binary number.";
+                        result.decimal = parseInt(num, 2);
+                        result.octal = parseInt(num, 2).toString(8);
+                        result.hexadecimal = parseInt(num, 2).toString(16).toUpperCase();
+                        break;
+                    case 'octal':
+                        if (!/^[0-7]+$/.test(num)) throw "Invalid octal number.";
+                        result.decimal = parseInt(num, 8);
+                        result.binary = parseInt(num, 8).toString(2);
+                        result.hexadecimal = parseInt(num, 8).toString(16).toUpperCase();
+                        break;
+                    case 'hexadecimal':
+                        if (!/^[0-9a-fA-F]+$/.test(num)) throw "Invalid hexadecimal number.";
+                        result.decimal = parseInt(num, 16);
+                        result.binary = parseInt(num, 16).toString(2);
+                        result.octal = parseInt(num, 16).toString(8);
+                        break;
+                    default:
+                        throw "Unknown number system.";
+                }
+
+                // Display the results
+                resultsDiv.innerHTML = `
+                    <h3>Conversion Results</h3>
+                    <ul>
+                        ${Object.keys(result).map(key => <li>${key.toUpperCase()}: ${result[key]}</li>).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = <p style="color: red;">Error: ${error}</p>;
+            }
+        });
+    </script>
+
+</body>
+</html>
